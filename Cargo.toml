@@ -1,0 +1,19 @@
+[package]
+name = "web-test"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+askama = { version = "0.12.1", features = ["with-axum"] }
+askama_axum = "0.3.0"
+axum = { version = "0.6.20", features = ["macros"] }
+chrono = { version = "0.4.31", features = ["serde"] }
+serde = { version = "1.0.190", features = ["derive"] }
+serde_json = "1.0.108"
+sqlx = { version = "0.7.2", features = ["sqlite", "runtime-tokio", "chrono"] }
+tokio = { version = "1.33.0", features = ["full"] }
+tower-http = { version = "0.4.4", features = ["cors", "fs"] }
+tracing = "0.1.40"
+tracing-subscriber = { version = "0.3.17", features = ["env-filter"] }
