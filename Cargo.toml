@@ -6,14 +6,20 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-askama = { version = "0.12.1", features = ["with-axum"] }
-askama_axum = "0.3.0"
 axum = { version = "0.6.20", features = ["macros"] }
 chrono = { version = "0.4.31", features = ["serde"] }
+comrak = "0.19.0"
+futures = "0.3.29"
+hyper = "0.14.27"
+reqwest = { version = "0.11.22", features = ["json"] }
+reqwest-eventsource = "0.5.0"
 serde = { version = "1.0.190", features = ["derive"] }
 serde_json = "1.0.108"
 sqlx = { version = "0.7.2", features = ["sqlite", "runtime-tokio", "chrono"] }
+tera = "1.19.1"
 tokio = { version = "1.33.0", features = ["full"] }
+tokio-stream = "0.1.14"
+tower-cookies = "0.9.0"
 tower-http = { version = "0.4.4", features = ["cors", "fs"] }
 tracing = "0.1.40"
 tracing-subscriber = { version = "0.3.17", features = ["env-filter"] }

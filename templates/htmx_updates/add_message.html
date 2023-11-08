@@ -1,0 +1,5 @@
+{% import "components/message.html" as macros %}
+
+{{ macros::message(variant="human", text=human_message) }}
+{{ macros::message(variant="ai-sse", text="") }}
+<div id="new-message"></div>

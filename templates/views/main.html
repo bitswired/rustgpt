@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="/assets/output.css" />
+    <script src="https://unpkg.com/htmx.org@1.9.6"
+        integrity="sha384-FhXw7b6AlE/jyjlZH5iHa/tTe9EpJ1Y55RjcgPbjeWMskSxZt1v9qkxLJWNJaGni"
+        crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/htmx.org/dist/ext/sse.js"></script>
+</head>
+
+<body>
+    {% include "components/header.html" %}
+    <main class="pt-[60px]">
+        {{ view | safe }}
+    </main>
+
+    {% if with_footer %}
+    {% include "components/footer.html" %}
+    {% endif %}
+</body>

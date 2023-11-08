@@ -1,35 +1,28 @@
-//! Example of application using <https://github.com/launchbadge/sqlx>
-//!
-//! Run with
-//!
-//! ```not_rust
-//! cargo run -p example-sqlx-postgres
-//! ```
-//!
-//! Test with curl:
-//!
-//! ```not_rust
-//! curl 127.0.0.1:3000
-//! curl -X POST 127.0.0.1:3000
-//! ```
-
-use askama::Template;
-use axum::{
-    async_trait,
-    extract::{FromRef, FromRequestParts, State},
-    http::{request::Parts, StatusCode},
-    routing::get,
-    Json, Router,
-};
+use axum::{http::StatusCode, Router};
 use serde::Serialize;
-use sqlx::{
-    sqlite::{SqlitePool, SqlitePoolOptions},
-    types::chrono::NaiveDateTime,
-};
+use sqlx::{sqlite::SqlitePoolOptions, types::chrono::NaiveDateTime, Pool, Sqlite};
+use tera::Tera;
+use tower_cookies::CookieManagerLayer;
 use tower_http::services::ServeDir;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
-use std::{net::SocketAddr, time::Duration};
+mod router;
+use router::app_router;
+use std::{net::SocketAddr, sync::Arc, time::Duration};
+mod ai;
+mod middleware;
+use middleware::extract_user;
+mod data;
+use data::repository::ChatRepository;
+
+use crate::middleware::handle_error;
+
+#[derive(Clone)]
+struct AppState {
+    pool: Arc<Pool<Sqlite>>,
+    tera: Tera,
+    chat_repo: ChatRepository,
+}
 
 #[tokio::main]
 async fn main() {
@@ -52,17 +45,48 @@ async fn main() {
         .await
         .expect("can't connect to database");
 
+    let pool = Arc::new(pool);
+
+    let chat_repo = ChatRepository { pool: pool.clone() };
+
     let static_files = ServeDir::new("assets");
+
+    let tera = match Tera::new("templates/**/*") {
+        Ok(t) => t,
+        Err(e) => {
+            println!("Parsing error(s): {}", e);
+            ::std::process::exit(1);
+        }
+    };
+
+    let state = AppState {
+        pool,
+        tera,
+        chat_repo,
+    };
+    let shared_app_state = Arc::new(state);
+
+    // let jdoom = axum::middleware::from_fn_with_state(shared_app_state.clone(), auth);
 
     // build our application with some routes
     let app = Router::new()
-        .route(
-            "/",
-            get(using_connection_pool_extractor).post(using_connection_extractor),
-        )
-        .route("/hello", get(hello))
+        // .route(
+        //     "/",
+        //     get(using_connection_pool_extractor).post(using_connection_pool_extractor),
+        // )
+        // Use `merge` to combine routers
         .nest_service("/assets", static_files)
-        .with_state(pool);
+        .with_state(shared_app_state.clone())
+        .nest("/", app_router(shared_app_state.clone()))
+        .layer(axum::middleware::from_fn_with_state(
+            shared_app_state.clone(),
+            handle_error,
+        ))
+        .layer(axum::middleware::from_fn_with_state(
+            shared_app_state.clone(),
+            extract_user,
+        ))
+        .layer(CookieManagerLayer::new());
 
     // run it with hyper
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
@@ -73,66 +97,13 @@ async fn main() {
         .unwrap();
 }
 
-#[derive(Debug, sqlx::FromRow, Serialize)]
+#[derive(Debug, sqlx::FromRow, Serialize, Clone)]
 pub struct User {
     id: i64,
-    name: String,
     email: String,
     password: String,
     created_at: NaiveDateTime,
-    updated_at: NaiveDateTime,
-}
-
-// we can extract the connection pool with `State`
-#[axum::debug_handler]
-async fn using_connection_pool_extractor(
-    State(pool): State<SqlitePool>,
-) -> Result<Json<User>, (StatusCode, String)> {
-    sqlx::query_as!(User, "select * from users")
-        .fetch_one(&pool)
-        .await
-        .map(axum::Json)
-        .map_err(internal_error)
-}
-
-// we can also write a custom extractor that grabs a connection from the pool
-// which setup is appropriate depends on your application
-struct DatabaseConnection(sqlx::pool::PoolConnection<sqlx::Sqlite>);
-
-#[async_trait]
-impl<S> FromRequestParts<S> for DatabaseConnection
-where
-    SqlitePool: FromRef<S>,
-    S: Send + Sync,
-{
-    type Rejection = (StatusCode, String);
-
-    async fn from_request_parts(_parts: &mut Parts, state: &S) -> Result<Self, Self::Rejection> {
-        let pool = SqlitePool::from_ref(state);
-
-        let conn = pool.acquire().await.map_err(internal_error)?;
-
-        Ok(Self(conn))
-    }
-}
-
-async fn using_connection_extractor(
-    DatabaseConnection(mut conn): DatabaseConnection,
-) -> Result<String, (StatusCode, String)> {
-    sqlx::query_scalar("select 'hello world from pg'")
-        .fetch_one(&mut *conn)
-        .await
-        .map_err(internal_error)
-}
-
-#[derive(Template)]
-#[template(path = "hello.html")]
-struct HelloTemplate<'a> {
-    name: &'a str,
-}
-
-async fn hello() -> HelloTemplate<'static> {
-    HelloTemplate { name: "world" }
+    openai_api_key: Option<String>,
 }
 
 /// Utility function for mapping any error into a `500 Internal Server Error`
