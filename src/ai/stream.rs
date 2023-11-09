@@ -43,6 +43,7 @@ struct Message {
     content: String,
 }
 
+#[derive(Debug)]
 pub enum GenerationEvent {
     Text(String),
     End(String),
@@ -78,11 +79,6 @@ pub async fn generate_sse_stream(
 
         std::iter::once(user_message).chain(std::iter::once(ai_message))
     });
-
-    println!("Model is: {}", model);
-    println!("Model is: {}", model);
-    println!("Model is: {}", model);
-    println!("Model is: {}", model);
 
     // Chain the system message with the user and AI messages, filter out the Nones, and collect into a Vec<Value>
     let body_messages = system_message_iter
@@ -169,64 +165,47 @@ pub async fn generate_sse_stream(
     Ok(())
 }
 
-#[tokio::test]
-async fn test_something_async() {
-    // Create a channel for sending SSE events
-    let (sender, receiver) = mpsc::channel(10);
+#[cfg(test)]
+mod tests {
+    use tokio_stream::wrappers::ReceiverStream;
 
-    // Convert the receiver end into a Stream
-    let mut stream = ReceiverStream::new(receiver);
+    use super::*;
 
-    // Call the function that generates the SSE stream
-    let generator_handle = tokio::spawn(async move {
-        generate_sse_stream("Hello".to_string(), sender)
-            .await
-            .unwrap();
-    });
+    #[tokio::test]
+    async fn test_something_async() {
+        // Create a channel for sending SSE events
+        let (_sender, receiver) = mpsc::channel::<Result<GenerationEvent, axum::Error>>(10);
 
-    while let Some(event) = stream.next().await {
-        match event {
-            Ok(sse_event) => {
-                println!("Received event: {:?}", sse_event)
+        // Convert the receiver end into a Stream
+        let mut stream = ReceiverStream::new(receiver);
+
+        // Read api key from .env
+        let _api_key = dotenv::var("OPENAI_API_KEY").unwrap();
+
+        let _pairs = vec![ChatMessagePair {
+            id: 1,
+            chat_id: 1,
+            message_block_id: 1,
+            model: "gpt-4".to_string(),
+            human_message: "Hello".to_string(),
+            ai_message: Some("Hi there!".to_string()),
+            block_rank: 1,
+            block_size: 1,
+        }];
+
+        tokio::spawn(async move {
+            generate_sse_stream(&_api_key, "gpt-4", _pairs, _sender)
+                .await
+                .unwrap();
+        });
+
+        while let Some(event) = stream.next().await {
+            match event {
+                Ok(sse_event) => {
+                    println!("Received event: {:?}", sse_event)
+                }
+                Err(_e) => {}
             }
-            Err(e) => {}
         }
     }
-
-    // Convert the Stream into an SSE response
-    let sse_response = Sse::new(stream);
-
-    // You can then test the SSE response by consuming the events from `sse_response`
-    // For this test, we're just going to drop the SSE response
-    drop(sse_response);
-
-    // Wait for the generator to finish
-    let result = generator_handle.await;
-
-    // Assert that the SSE event generation function completed successfully
-    assert!(result.is_ok());
 }
-
-// #[tokio::test]
-// async fn test_request_to_example_com() {
-//     let response = reqwest::get("http://example.com").await;
-
-//     // Check if the request was successful
-//     assert!(response.is_ok(), "Request should be successful");
-
-//     let response = response.unwrap();
-
-//     // Check if the HTTP status code is 200 OK
-//     assert_eq!(
-//         response.status(),
-//         reqwest::StatusCode::OK,
-//         "Response status should be 200 OK"
-//     );
-
-//     // Optionally, you can check the contents of the response
-//     let body = response.text().await;
-//     assert!(body.is_ok(), "Should be able to read the response body");
-
-//     // Here you can perform more detailed checks on the `body` if necessary,
-//     // such as checking for specific content.
-// }

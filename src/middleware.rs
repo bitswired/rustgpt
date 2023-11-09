@@ -6,8 +6,7 @@ use axum::{
     Extension,
 };
 
-
-use tera::{Context};
+use tera::Context;
 use tower_cookies::Cookies;
 
 use std::sync::Arc;
@@ -32,14 +31,9 @@ pub async fn extract_user<B>(
 where
     B: Send + 'static,
 {
-    println!("-------------");
     let session = cookies.get("rust-gpt-session");
 
     let id = session.map_or(-1, |x| x.value().parse::<i64>().unwrap_or(-1));
-
-    print!("-------------");
-    println!("id: {}", id);
-    print!("-------------");
 
     // Get the user
     match sqlx::query_as!(
@@ -53,9 +47,6 @@ where
         Ok(current_user) => {
             // insert the current user into a request extension so the handler can
             // extract it, and make sure `user` is not used after this point
-            print!("-------------");
-            println!("user: {:?}", current_user);
-            print!("-------------");
             req.extensions_mut().insert(Some(current_user));
             Ok(next.run(req).await)
         }

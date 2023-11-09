@@ -1,6 +1,8 @@
 use axum::{http::StatusCode, Router};
 use serde::Serialize;
-use sqlx::{sqlite::SqlitePoolOptions, types::chrono::NaiveDateTime, Pool, Sqlite};
+use sqlx::{
+    migrate::Migrator, sqlite::SqlitePoolOptions, types::chrono::NaiveDateTime, Pool, Sqlite,
+};
 use tera::Tera;
 use tower_cookies::CookieManagerLayer;
 use tower_http::services::ServeDir;
@@ -8,7 +10,7 @@ use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 mod router;
 use router::app_router;
-use std::{net::SocketAddr, sync::Arc, time::Duration};
+use std::{net::SocketAddr, path::Path, sync::Arc, time::Duration};
 mod ai;
 mod middleware;
 use middleware::extract_user;
@@ -34,8 +36,7 @@ async fn main() {
         .with(tracing_subscriber::fmt::layer())
         .init();
 
-    let db_connection_str =
-        std::env::var("DATABASE_URL").unwrap_or_else(|_| "sqlite:db.db".to_string());
+    let db_connection_str = dotenv::var("DATABASE_URL").unwrap();
 
     // setup connection pool
     let pool = SqlitePoolOptions::new()
@@ -44,6 +45,13 @@ async fn main() {
         .connect(&db_connection_str)
         .await
         .expect("can't connect to database");
+
+    // Create a new instance of `Migrator` pointing to the migrations folder.
+    let migrator = Migrator::new(Path::new(dotenv::var("MIGRATIONS_PATH").unwrap().as_str()))
+        .await
+        .unwrap();
+    // Run the migrations.
+    migrator.run(&pool).await.unwrap();
 
     let pool = Arc::new(pool);
 

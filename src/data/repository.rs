@@ -1,21 +1,9 @@
 use std::sync::Arc;
 
-
-use serde::Deserialize;
-use serde_json::Value;
 use sqlx::sqlite::SqlitePool;
 use sqlx::{Row, Sqlite, Transaction};
 
 use super::model::{Chat, ChatMessagePair};
-
-#[derive(Debug, Deserialize)]
-struct CompleteChat {
-    id: i32,
-    user_id: i32,
-    name: String,
-    created_at: String,
-    message_blocks: Value, // Use serde_json::Value to hold the nested JSON
-}
 
 #[derive(Clone)]
 pub struct ChatRepository {
@@ -152,11 +140,11 @@ impl ChatRepository {
 
 #[cfg(test)]
 mod tests {
+    use std::path::Path;
+
     use sqlx::migrate::Migrator;
 
     use super::*;
-
-    static MIGRATOR: Migrator = sqlx::migrate!("./migrations");
 
     async fn setup() -> (Arc<SqlitePool>, ChatRepository, i64) {
         let x = std::env::var("DATABASE_URL").unwrap_or_else(|_| "sqlite:db.db".to_string());
@@ -165,7 +153,11 @@ mod tests {
         // let pool = SqlitePool::connect("sqlite::memory:").await.unwrap();
         let pool = Arc::new(pool);
 
-        MIGRATOR.run(&*pool).await.unwrap();
+        let migrator = Migrator::new(Path::new(dotenv::var("MIGRATIONS_PATH").unwrap().as_str()))
+            .await
+            .unwrap();
+        // Run the migrations.
+        migrator.run(&*pool).await.unwrap();
 
         let user = sqlx::query!(
             "INSERT INTO users (email, password) VALUES ($1, $2) RETURNING id",
@@ -184,29 +176,29 @@ mod tests {
     #[tokio::test]
     async fn test_create_chat() {
         let (pool, repo, user_id) = setup().await;
-        let chat = repo.create_chat(user_id).await;
+        let chat = repo.create_chat(user_id, "test", "gpt-4").await;
         assert!(chat.is_ok(), "Failed to create chat");
     }
 
     #[tokio::test]
     async fn test_add_message_block() {
         let (pool, repo, user_id) = setup().await;
-        let chat = repo.create_chat(user_id).await;
+        let chat = repo.create_chat(user_id, "test", "gpt-4").await;
         assert!(chat.is_ok(), "Failed to create chat");
         let chat_id = chat.unwrap();
 
-        let message_block = repo.add_message_block(chat_id, "Test".to_string()).await;
+        let message_block = repo.add_message_block(chat_id, "Test").await;
         assert!(message_block.is_ok(), "Failed to add message_block")
     }
 
     #[tokio::test]
     async fn test_json() {
         let (pool, repo, user_id) = setup().await;
-        let chat = repo.create_chat(user_id).await;
+        let chat = repo.create_chat(user_id, "test", "gpt-4").await;
         assert!(chat.is_ok(), "Failed to create chat");
         let chat_id = chat.unwrap();
 
-        let message_block = repo.add_message_block(chat_id, "Test".to_string()).await;
+        let message_block = repo.add_message_block(chat_id, "Test").await;
         assert!(message_block.is_ok(), "Failed to add message_block");
 
         let chat_message_pairs = repo.retrieve_chat(chat_id).await;

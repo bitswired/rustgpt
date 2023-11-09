@@ -627,6 +627,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "dotenv"
+version = "0.15.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "77c90badedccf4105eca100756a0b1289e191f6fcbdadd3cee1d2f614f97da8f"
+
+[[package]]
 name = "dotenvy"
 version = "0.15.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1959,6 +1965,30 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d626bb9dae77e28219937af045c257c28bfd3f69333c512553507f5f9798cb76"
 
 [[package]]
+name = "rustgpt"
+version = "0.1.0"
+dependencies = [
+ "axum",
+ "chrono",
+ "comrak",
+ "dotenv",
+ "futures",
+ "hyper",
+ "reqwest",
+ "reqwest-eventsource",
+ "serde",
+ "serde_json",
+ "sqlx",
+ "tera",
+ "tokio",
+ "tokio-stream",
+ "tower-cookies",
+ "tower-http",
+ "tracing",
+ "tracing-subscriber",
+]
+
+[[package]]
 name = "rustix"
 version = "0.38.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3103,29 +3133,6 @@ checksum = "5db499c5f66323272151db0e666cd34f78617522fb0c1604d31a27c50c206a85"
 dependencies = [
  "js-sys",
  "wasm-bindgen",
-]
-
-[[package]]
-name = "web-test"
-version = "0.1.0"
-dependencies = [
- "axum",
- "chrono",
- "comrak",
- "futures",
- "hyper",
- "reqwest",
- "reqwest-eventsource",
- "serde",
- "serde_json",
- "sqlx",
- "tera",
- "tokio",
- "tokio-stream",
- "tower-cookies",
- "tower-http",
- "tracing",
- "tracing-subscriber",
 ]
 
 [[package]]
