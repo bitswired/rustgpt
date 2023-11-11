@@ -2,12 +2,16 @@ version: "3.8"
 services:
   axum-app:
     build: .
-    env_file:
-      - .env
+    environment:
+      - MIGRATIONS_PATH=/migrations
+      - TEMPLATES_PATH=/templates
+      - DATABASE_URL=sqlite:db/db.db
+      - DATABASE_PATH=/db/db.db
     ports:
       - "3000:3000"
     volumes:
-      - sqlite-data:/app/data
+      - data:/db
+    image: bitswired/rustgpt
 
 volumes:
-  sqlite-data:
+  data:

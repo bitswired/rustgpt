@@ -7,7 +7,7 @@ dev-server:
 	cargo watch -w src -w templates -w tailwind.config.js -w input.css -x run 
 
 dev-tailwind:
-	./tailwindcss -i input.css -o assets/output.css --watch
+	./tailwindcss -i input.css -o assets/output.css --watch=always
 
 build-server:
 	cargo build --release
@@ -18,9 +18,18 @@ build-tailwind:
 
 db-migrate:
   echo "Migrating ..."
-  sqlx migrate run;
+  sqlx migrate run --source $MIGRATIONS_PATH;
 
 db-reset:
   echo "Resetting ..."
-  sqlx database drop && sqlx database create && sqlx migrate run
-  sqlite3 db.db < seeds/seed-users.sql
+  sqlx database drop && sqlx database create && sqlx migrate run --source $MIGRATIONS_PATH
+  sqlite3 $DATABASE_PATH < seeds/seed-users.sql
+
+dev:
+	#!/bin/sh
+	just dev-tailwind &
+	pid1=$!
+	just dev-server &
+	pid2=$!
+	trap "kill $pid1 $pid2" EXIT
+	wait $pid1 $pid2

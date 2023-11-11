@@ -82,6 +82,7 @@ pub async fn login_form(
 }
 
 pub async fn signup(State(state): State<Arc<AppState>>) -> Html<String> {
+    // TODO: Hash password
     let mut context = Context::new();
     context.insert("name", "World");
     let home = state.tera.render("views/signup.html", &context).unwrap();

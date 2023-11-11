@@ -1,7 +1,10 @@
 use axum::{http::StatusCode, Router};
 use serde::Serialize;
 use sqlx::{
-    migrate::Migrator, sqlite::SqlitePoolOptions, types::chrono::NaiveDateTime, Pool, Sqlite,
+    migrate::Migrator,
+    sqlite::{SqliteConnectOptions, SqlitePoolOptions},
+    types::chrono::NaiveDateTime,
+    Pool, Sqlite,
 };
 use tera::Tera;
 use tower_cookies::CookieManagerLayer;
@@ -36,13 +39,17 @@ async fn main() {
         .with(tracing_subscriber::fmt::layer())
         .init();
 
-    let db_connection_str = dotenv::var("DATABASE_URL").unwrap();
+    let db_path = dotenv::var("DATABASE_PATH").unwrap();
+    let options = SqliteConnectOptions::new()
+        .filename(db_path)
+        .journal_mode(sqlx::sqlite::SqliteJournalMode::Wal)
+        .create_if_missing(true);
 
     // setup connection pool
     let pool = SqlitePoolOptions::new()
         .max_connections(5)
         .acquire_timeout(Duration::from_secs(3))
-        .connect(&db_connection_str)
+        .connect_with(options)
         .await
         .expect("can't connect to database");
 
@@ -97,7 +104,7 @@ async fn main() {
         .layer(CookieManagerLayer::new());
 
     // run it with hyper
-    let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
+    let addr = SocketAddr::from(([0, 0, 0, 0], 3000));
     tracing::debug!("listening on {}", addr);
     axum::Server::bind(&addr)
         .serve(app.into_make_service())
