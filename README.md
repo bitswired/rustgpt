@@ -1,5 +1,7 @@
 # RustGPT 🦀✨
 
+https://github.com/bitswired/rustgpt/assets/19983429/980a88b9-93df-48c7-a438-b232d2830e00
+
 Welcome to the RustGPT repository! Here, you'll find a web ChatGPT clone entirely crafted using Rust and HTMX, where technology meets simplicity and performance. 🚀
 
 - [Try the RustGPT hosted demo](https://rustgpt.bitswired.com)
