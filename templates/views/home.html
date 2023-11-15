@@ -40,17 +40,18 @@
         <dl class="grid max-w-xl grid-cols-1 gap-x-8 gap-y-10 lg:max-w-none lg:grid-cols-2 lg:gap-y-16">
             {{ macros::feature_card(title="Rust + Axum + SQLite", points=["Lightweight and fast", "Single process",
             "Efficient data
-            handling"]) }}
+            handling"], icon_name="rust")}}
             {{ macros::feature_card(title="HTMX + Tera Templates", points=["Not a single line of JavaScript or
             WebAssembly
             written",
-            "Just the HTMX JS library and full HTML", "No React, Vue, or other JS frameworks"]) }}
+            "Just the HTMX JS library and full HTML", "No React, Vue, or other JS frameworks"],
+            icon_name="code-diamond") }}
             {{ macros::feature_card(title="Tailwind", points=["Responsive design out of the box", "PurgeCSS for minimal
             CSS
             footprint",
-            "Customizable theming"]) }}
+            "Customizable theming"], icon_name="tailwind") }}
             {{ macros::feature_card(title="Justfile", points=["For commands", "Simplify build tasks", "Streamline
-            development workflow"])
+            development workflow"], icon_name="just")
             }}
         </dl>
     </div>

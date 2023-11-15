@@ -82,7 +82,7 @@ pub async fn blog_by_slug(
     State(state): State<Arc<AppState>>,
     Extension(current_user): Extension<Option<User>>,
 ) -> Result<Html<String>, StatusCode> {
-    let template = format!("articles/{}/body.html", slug);
+    let template = format!("articles/{}/body.md", slug);
 
     match state.tera.get_template(&template) {
         Ok(_) => {

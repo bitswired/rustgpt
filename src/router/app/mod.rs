@@ -32,6 +32,10 @@ pub fn app_router(state: Arc<AppState>) -> Router {
         .layer(axum::middleware::from_fn(valid_openai_api_key))
         .layer(axum::middleware::from_fn(auth));
 
+    let settings_router = Router::new()
+        .route("/", get(settings).post(settings_openai_api_key))
+        .layer(axum::middleware::from_fn(auth));
+
     Router::new()
         .route("/", get(app))
         .route("/error", get(error))
@@ -40,7 +44,7 @@ pub fn app_router(state: Arc<AppState>) -> Router {
         .route("/logout", get(logout))
         .route("/blog", get(blog))
         .route("/blog/:slug", get(blog_by_slug))
-        .route("/settings", get(settings).post(settings_openai_api_key))
         .nest("/chat", chat_router)
+        .nest("/settings", settings_router)
         .with_state(state.clone())
 }

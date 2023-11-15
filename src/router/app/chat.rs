@@ -11,17 +11,15 @@ use serde::{Deserialize, Serialize};
 use tera::Context;
 use tokio_stream::wrappers::ReceiverStream; // This brings the necessary stream combinators into scope
 
-use std::{sync::Arc};
+use std::sync::Arc;
 
 use crate::{
     ai::stream::{generate_sse_stream, list_engines, GenerationEvent},
-    data::model::{ChatMessagePair},
+    data::model::ChatMessagePair,
     AppState, User,
 };
 
-
 use tokio_stream::StreamExt as TokioStreamExt;
-
 
 pub enum ChatError {
     Other,
@@ -274,8 +272,6 @@ pub async fn chat_generate(
                             Some((Ok(Event::default().data(s)), (rc, accumulated)))
                         }
                         GenerationEvent::End(text) => {
-                            println!("accumulated: {:?}", accumulated);
-                            println!("accumulated: {:?}", accumulated);
                             println!("accumulated: {:?}", accumulated);
 
                             state_clone
