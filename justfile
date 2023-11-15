@@ -1,7 +1,11 @@
+set dotenv-load
+
+
 init:
 	cargo install cargo-watch
 	cargo install sqlx-cli
 	sqlx database create
+	just db-migrate
 
 dev-server:
 	cargo watch -w src -w templates -w tailwind.config.js -w input.css -x run 
