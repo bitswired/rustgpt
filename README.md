@@ -1,10 +1,13 @@
 # RustGPT 🦀✨
 
-Welcome to the RustGPT repository! Here, you'll find an innovative web ChatGPT clone entirely crafted using Rust and HTMX, where cutting-edge technology meets simplicity and performance. 🚀
+Welcome to the RustGPT repository! Here, you'll find a web ChatGPT clone entirely crafted using Rust and HTMX, where technology meets simplicity and performance. 🚀
+
+- [Try the RustGPT hosted demo](https://rustgpt.bitswired.com)
+- [Read the blog article](https://www.bitswired.com/en/blog/post/rustgpt-journey-rust-htmx-web-dev)
 
 ## Introduction
 
-RustGPT is the culmination of my latest experiment in cloning the abilities of OpenAI's ChatGPT. It represents the fourth iteration in a series of clones, each built with different tech stacks to evaluate their functionality in creating a ChatGPT-like application.
+RustGPT is my latest experiment in cloning the abilities of OpenAI's ChatGPT. It represents the fourth iteration in a series of clones, each built with different tech stacks to evaluate their functionality in creating a ChatGPT-like application.
 
 In this repository, you will find a Rust-based server leveraging the Axum framework combined with HTMX, providing a Rusty web development experience. From database operations to streaming responses, this project covers a broad spectrum of backend functionalities and real-time web interactions.
 
@@ -31,9 +34,11 @@ Jump right into it by following these steps:
 
 1. Clone the repository.
 2. Navigate to the repository directory.
-3. Use the `justfile` for running database migrations.
-4. Run `cargo run` to start your RustGPT server.
-5. Open your browser and enjoy chatting with your Rust-powered ChatGPT clone!
+3. Install TailwindCSS Standalone in this repository: https://tailwindcss.com/blog/standalone-cli.
+4. `cargo install just`: install Just
+5. `just init`: install additional tools and migrate the db
+6. `just dev`: concurrently run tailwind and cargo run in watch mode
+7. Open your browser and enjoy chatting with your Rust-powered ChatGPT clone (port 3000 by default)
 
 ## Contributing 🤝
 
@@ -47,4 +52,4 @@ Hats off to the wonderful crates and libraries that made RustGPT possible!
 
 ---
 
-Created with 💚 by a Rustacean who believes in the power of Rust for the web! Follow the journey on [LinkedIn](#).
+Created with 💚 by a Rustacean who believes in the power of Rust for the web! Follow the journey on [Bitswired](https://www.bitswired.com).
