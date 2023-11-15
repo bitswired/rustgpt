@@ -1,4 +1,4 @@
 {
-  "title": "Intro",
-  "description": "Delve into the technical journey behind RustGPT, a ChatGPT clone engineered with Rust, Axum, HTMX, and Tailwind CSS. Discover the motivations for selecting this stack, the challenges tackled, and the triumphs of building a lean and efficient chatbot platform. This article unveils the project's inner workings and shares insights into the future of web development through the lens of RustGPT."
+  "title": "Test blog article",
+  "description": "This is a test parseing Markdown blog articles server-side using Comrak in Rust."
 }
