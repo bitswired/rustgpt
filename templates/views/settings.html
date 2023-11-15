@@ -1,0 +1,15 @@
+<div class="min-h-[100vh] pt-[200px]">
+    <form action="/settings" method="post">
+        <div class="shadow-lg max-w-xl m-auto">
+            <label for="hs-trailing-button-add-on" class="sr-only">Label</label>
+            <div class="flex rounded-md shadow-sm">
+                <input name="api_key" type="password" value="{{ openai_api_key }}"
+                    class="p-2 block w-full border-gray-200 shadow-sm rounded-l-md text-sm focus:z-10 focus:border-indigo-500 focus:ring-indigo-500">
+                <button type="submit"
+                    class="py-3 px-4 inline-flex flex-shrink-0 justify-center items-center gap-2 rounded-r-md border border-transparent font-semibold bg-indigo-500 text-white hover:bg-indigo-600 focus:z-10 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all text-sm">
+                    Update API key
+                </button>
+            </div>
+        </div>
+    </form>
+</div>

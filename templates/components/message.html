@@ -1,0 +1,22 @@
+{% macro message(variant, text) %}
+<div data-variant="{{ variant }}" class="p-4 px-16
+    data-[variant=ai]:bg-slate-100 
+    data-[variant=ai-sse]:bg-slate-100 
+    data-[variant=human]:bg-slate-200 
+    ">
+
+    <div class="max-w-[600px] m-auto prose">
+        {% if variant == "ai-sse" %}
+        <div id="message-container">
+            <!-- Messages will be appended here -->
+        </div>
+        <div id="sse-listener" hx-ext="sse" sse-connect="/chat/{{ chat_id }}/generate" sse-swap="message"
+            hx-target="#message-container"></div>
+        {% else %}
+        {{text | safe}}
+        {% endif %}
+
+    </div>
+
+</div>
+{% endmacro input %}

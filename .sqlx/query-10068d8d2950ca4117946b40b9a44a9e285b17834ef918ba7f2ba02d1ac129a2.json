@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "\n            UPDATE message_blocks\n            SET selected_pair_id = ?\n            WHERE id = ?;\n            ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 2
+    },
+    "nullable": []
+  },
+  "hash": "10068d8d2950ca4117946b40b9a44a9e285b17834ef918ba7f2ba02d1ac129a2"
+}

@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "INSERT INTO settings (user_id, openai_api_key) VALUES (?, ?) ON CONFLICT (user_id) DO UPDATE SET openai_api_key = ?",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 3
+    },
+    "nullable": []
+  },
+  "hash": "9de13aae8c6cf73c4cb2158f61ce43dd745418e21c8fb38cf063afa8ff132a00"
+}

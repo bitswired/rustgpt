@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* Style for Webkit browsers like Chrome, Safari */
+  ::-webkit-scrollbar {
+    width: 0.2rem; /* Thinner scrollbar */
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent; /* Optional: Transparent track */
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #6366f1; /* Tailwind indigo-500 color */
+    border-radius: 0.25rem; /* Optional: Rounded corners */
+    border: 3px solid transparent; /* Optional: Invisible border */
+  }
+
+  /* Style for Firefox */
+  * {
+    scrollbar-width: thin; /* Thinner scrollbar */
+    scrollbar-color: #6366f1 transparent; /* Tailwind indigo-500 color and transparent track */
+  }
+}

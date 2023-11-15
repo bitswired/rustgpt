@@ -1,0 +1,62 @@
+{
+  "db_name": "SQLite",
+  "query": "SELECT * FROM v_chat_messages WHERE chat_id = ?",
+  "describe": {
+    "columns": [
+      {
+        "name": "id",
+        "ordinal": 0,
+        "type_info": "Int64"
+      },
+      {
+        "name": "message_block_id",
+        "ordinal": 1,
+        "type_info": "Int64"
+      },
+      {
+        "name": "chat_id",
+        "ordinal": 2,
+        "type_info": "Int64"
+      },
+      {
+        "name": "model",
+        "ordinal": 3,
+        "type_info": "Text"
+      },
+      {
+        "name": "human_message",
+        "ordinal": 4,
+        "type_info": "Text"
+      },
+      {
+        "name": "ai_message",
+        "ordinal": 5,
+        "type_info": "Text"
+      },
+      {
+        "name": "block_rank",
+        "ordinal": 6,
+        "type_info": "Int64"
+      },
+      {
+        "name": "block_size",
+        "ordinal": 7,
+        "type_info": "Int64"
+      }
+    ],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      false,
+      false
+    ]
+  },
+  "hash": "a9e68bb44b78760a2862217cf8e6e4a1f000bd12e319551eb4201fd4474ff0ef"
+}

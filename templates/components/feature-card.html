@@ -1,0 +1,18 @@
+{% import "components/icon.html" as macros %}
+
+{% macro feature_card(title, points, icon_name) %}
+<div class="relative pl-16">
+    <dt class="text-base font-semibold leading-7 text-gray-900">
+        <div
+            class="text-white absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-600">
+            {{ macros::icon(name=icon_name, size="32")}}
+        </div>
+        {{ title }}
+    </dt>
+    <dd class="mt-2 text-base leading-7 text-gray-600">
+        {% for point in points %}
+        <span>{{ point }}.</span>
+        {% endfor %}
+    </dd>
+</div>
+{% endmacro %}

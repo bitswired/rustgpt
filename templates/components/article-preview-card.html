@@ -1,0 +1,15 @@
+{% macro article_preview_card(slug, title, description) %}
+<div class="max-w-sm rounded overflow-hidden shadow-lg bg-white hover:bg-gray-100 transition duration-200 ease-in-out">
+    <div class="px-6 py-4">
+        <div class="font-bold text-xl mb-2">{{ title }}</div>
+        <p class="text-gray-700 text-base">
+            {{ description }}
+        </p>
+    </div>
+    <div class="px-6 pt-4 pb-2">
+        <a href="/blog/{{ slug }}"
+            class="inline-block bg-indigo-600 rounded-full px-3 py-1 text-sm font-semibold text-white mr-2 mb-2 hover:bg-indigo-700 transition duration-200 ease-in-out">Read
+            More</a>
+    </div>
+</div>
+{%- endmacro %}

@@ -1,0 +1,20 @@
+{
+  "db_name": "SQLite",
+  "query": "\n            INSERT INTO message_pairs (human_message_id, message_block_id)\n            VALUES (?, ?) RETURNING id;\n            ",
+  "describe": {
+    "columns": [
+      {
+        "name": "id",
+        "ordinal": 0,
+        "type_info": "Int64"
+      }
+    ],
+    "parameters": {
+      "Right": 2
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "27ac2555cd55ba79cd83b9e039cf5c4d9512997ae1fbf0b0ed842b91dd1cc231"
+}

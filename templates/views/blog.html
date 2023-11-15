@@ -1,0 +1,12 @@
+{% import "components/article-preview-card.html" as macros %}
+
+<div class="min-h-[calc(100vh-60px)]">
+
+    <h1 class="m-auto w-max text-6xl p-8">Blog</h1>
+
+    <div class="flex flex-wrap gap-8 px-16 py-8">
+        {% for preview in previews %}
+        {{ macros::article_preview_card(slug=preview.0, title=preview.1.title, description=preview.1.description) }}
+        {% endfor %}
+    </div>
+</div>

@@ -1,0 +1,40 @@
+<!-- model_picker.html -->
+{% macro model_picker(models, selected_model) %}
+<form>
+    <div class="bg-white p-6 shadow rounded-lg">
+        <div class="mb-4 text-lg font-semibold text-gray-700">Pick a model for this chat</div>
+
+        <div class="flex gap-4">
+            {% for model in models %}
+            <label class="relative">
+                {% if model.1 == selected_model.1 %}
+                <input name="model" type="radio" value="{{ model.1 }}" class="peer sr-only" checked>
+                {% else %}
+                <input name="model" type="radio" value="{{ model.1 }}" class="peer sr-only">
+                {% endif %}
+
+                <div class="flex items-center p-4 border-2 peer-checked:border-indigo-600 rounded-lg cursor-pointer">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="text-indigo-600 font-medium">{{ model.0 }}</div>
+                            <div class="text-sm text-gray-500">{{ model.2 }}</div>
+                        </div>
+                        <!-- <div class="text-sm font-semibold">621 users</div> -->
+                    </div>
+                </div>
+                <div class="absolute right-1 bottom-1 ml-auto flex-shrink-0 text-indigo-600 peer-checked:block hidden">
+                    <!-- This is the checkmark icon, you might want to use an SVG or an icon from a library -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                </div>
+            </label>
+            {% endfor %}
+
+            <!-- Continue with other options... -->
+
+        </div>
+    </div>
+</form>
+{% endmacro %}

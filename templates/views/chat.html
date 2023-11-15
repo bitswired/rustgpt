@@ -1,0 +1,131 @@
+{% import "components/message.html" as macros %}
+{% import "components/model-picker.html" as model_macros %}
+
+<div class="flex h-[calc(100vh-60px)] overflow-hidden">
+    <div class=" bg-slate-200 w-[300px] flex-shrink-0  pt-4 flex flex-col relative">
+        <a href="/chat"
+            class="flex items-center my-2 mx-4 justify-between rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+            <span>New Chat</span>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+        </a>
+
+
+        <div class="flex flex-col gap-4 p-4 overflow-y-auto">
+            {% if user_chats %}
+            {% for chat in user_chats %}
+
+            <div id="chat-{{ chat.id }}"
+                class="rounded-lg p-2 flex gap-3 items-center relative group {% if chat_id and chat_id==chat.id %} bg-indigo-200 {% endif %} ">
+                <div class="w-[20px]">
+                    <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round"
+                        stroke-linejoin="round" class="icon-sm" height="1em" width="1em"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                </div>
+
+                <a href="/chat/{{ chat.id }}" class="hover:underline line-clamp-1">{{ chat.name }}</a>
+
+                <a class="cursor-pointer hidden group-hover:flex text-pink-700 absolute inset-y-0 right-0 justify-center items-center"
+                    hx-delete="/chat/{{ chat.id }}" hx-target="#chat-{{ chat.id }}" hx-swap="outerHTML">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                        <path fill-rule="evenodd"
+                            d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.72 6.97a.75.75 0 10-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 101.06 1.06L12 13.06l1.72 1.72a.75.75 0 101.06-1.06L13.06 12l1.72-1.72a.75.75 0 10-1.06-1.06L12 10.94l-1.72-1.72z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </a>
+            </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+
+        <div class="absolute bottom-0 left-0 right-0 mt-auto p-4 bg-indigo-600 text-white">
+            <a class="" href="https://www.bitswired.com" target="_blank">
+                Built by <span class="underline">Bitswired</span> 💚
+            </a>
+        </div>
+
+    </div>
+
+    <div class="bg-slate-100 shadow-xl flex-grow relative">
+
+        {% if models %}
+        <div class="p-0">
+            {{ model_macros::model_picker(models=models, selected_model=selected_model) }}
+        </div>
+        {% elif selected_model %}
+        <div class="p-4 flex gap-4">
+            <div class="bg-indigo-600 text-white font-bold w-max rounded-xl px-4 py-2">
+                {{ selected_model.0 }}
+            </div>
+            <div class="text-indigo-600  w-max rounded-xl px-4 py-2 font-thin">
+                {{ selected_model.1 }}
+            </div>
+            <div class="text-indigo-600  w-max rounded-xl px-4 py-2">
+                {{ selected_model.2 }}
+            </div>
+        </div>
+        {% endif %}
+
+
+        <div class="flex flex-col h-full w-full overflow-y-auto">
+            {% if chat_message_pairs %}
+            {% for pair in chat_message_pairs %}
+
+            {{ macros::message(variant="human", text=pair.human_message_html) }}
+
+            {% if pair.pair.ai_message %}
+            {{ macros::message(variant="ai", text=pair.ai_message_html) }}
+            {% else %}
+            {{ macros::message(variant="ai-sse", text="") }}
+            {% endif %}
+
+            {% endfor %}
+            {% endif %}
+
+            <div id="new-message"></div>
+
+            <div class="mt-[200px]"></div>
+        </div>
+
+        <div id="chat-input" class="absolute bottom-0 left-0 right-0 mt-auto">
+            {% if chat_id is undefined %}
+            <form class="max-w-[800px] mx-auto">
+                <div class="shadow-lg pb-2 backdrop-blur-lg">
+                    <label for="hs-trailing-button-add-on" class="sr-only">Label</label>
+                    <div class="flex rounded-md shadow-sm">
+                        <textarea name="message" type="text" id="hs-trailing-button-add-on"
+                            name="hs-trailing-button-add-on"
+                            class="p-4 block w-full border-gray-200 shadow-sm rounded-l-md text-sm focus:z-10 focus:border-indigo-500 focus:ring-indigo-500"></textarea>
+                        <button type="submit"
+                            class="py-3 px-4 inline-flex flex-shrink-0 justify-center items-center gap-2 rounded-r-md border border-transparent font-semibold bg-indigo-500 text-white hover:bg-indigo-600 focus:z-10 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all text-sm"
+                            hx-post="/chat" hx-include="[name='message'], [name='model']">
+                            Create
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            {% else %}
+            <form class="max-w-[800px] mx-auto" method="post" hx-post="/chat/{{ chat_id }}/message/add"
+                hx-target="#new-message" hx-swap="outerHTML">
+                <div class="shadow-lg pb-2 backdrop-blur-lg">
+                    <label for="hs-trailing-button-add-on" class="sr-only">Label</label>
+                    <div class="flex rounded-md shadow-sm">
+                        <textarea name="message" type="text" id="hs-trailing-button-add-on"
+                            name="hs-trailing-button-add-on"
+                            class="p-4 block w-full border-gray-200 shadow-sm rounded-l-md text-sm focus:z-10 focus:border-indigo-500 focus:ring-indigo-500"></textarea>
+                        <button type="submit"
+                            class="py-3 px-4 inline-flex flex-shrink-0 justify-center items-center gap-2 rounded-r-md border border-transparent font-semibold bg-indigo-500 text-white hover:bg-indigo-600 focus:z-10 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all text-sm">
+                            Send
+                        </button>
+                    </div>
+                </div>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+</div>

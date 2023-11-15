@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "\n            UPDATE message_pairs\n            SET ai_message_id = ?\n            WHERE id = ?;\n            ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 2
+    },
+    "nullable": []
+  },
+  "hash": "8ec4b4808769b6c8758bdaec7d80d476ce76124b63e86f00a788294b0da4e92f"
+}

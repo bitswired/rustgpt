@@ -1,0 +1,5 @@
+/target
+.env
+*.db*
+tailwindcss
+output.css
